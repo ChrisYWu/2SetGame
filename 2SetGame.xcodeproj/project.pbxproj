@@ -12,6 +12,9 @@
 		AABB00C3218CF56900423390 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AABB00C1218CF56900423390 /* Main.storyboard */; };
 		AABB00C5218CF56A00423390 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AABB00C4218CF56A00423390 /* Assets.xcassets */; };
 		AABB00C8218CF56A00423390 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AABB00C6218CF56A00423390 /* LaunchScreen.storyboard */; };
+		AABB00D3218D0A2300423390 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = AABB00D2218D0A2300423390 /* Extensions.swift */; };
+		AABB00D5218D168B00423390 /* Card.swift in Sources */ = {isa = PBXBuildFile; fileRef = AABB00D4218D168B00423390 /* Card.swift */; };
+		AABB00D7218D415000423390 /* SetGame.swift in Sources */ = {isa = PBXBuildFile; fileRef = AABB00D6218D415000423390 /* SetGame.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -22,6 +25,9 @@
 		AABB00C4218CF56A00423390 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		AABB00C7218CF56A00423390 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		AABB00C9218CF56A00423390 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		AABB00D2218D0A2300423390 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		AABB00D4218D168B00423390 /* Card.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Card.swift; sourceTree = "<group>"; };
+		AABB00D6218D415000423390 /* SetGame.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetGame.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,10 +64,21 @@
 				AABB00BF218CF56900423390 /* ViewController.swift */,
 				AABB00C1218CF56900423390 /* Main.storyboard */,
 				AABB00C4218CF56A00423390 /* Assets.xcassets */,
-				AABB00C6218CF56A00423390 /* LaunchScreen.storyboard */,
+				AABB00CF218CF70B00423390 /* Supporting Files */,
 				AABB00C9218CF56A00423390 /* Info.plist */,
+				AABB00D2218D0A2300423390 /* Extensions.swift */,
+				AABB00D4218D168B00423390 /* Card.swift */,
+				AABB00D6218D415000423390 /* SetGame.swift */,
 			);
 			path = 2SetGame;
+			sourceTree = "<group>";
+		};
+		AABB00CF218CF70B00423390 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				AABB00C6218CF56A00423390 /* LaunchScreen.storyboard */,
+			);
+			path = "Supporting Files";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -136,7 +153,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				AABB00C0218CF56900423390 /* ViewController.swift in Sources */,
+				AABB00D3218D0A2300423390 /* Extensions.swift in Sources */,
+				AABB00D7218D415000423390 /* SetGame.swift in Sources */,
 				AABB00BE218CF56900423390 /* AppDelegate.swift in Sources */,
+				AABB00D5218D168B00423390 /* Card.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -282,15 +302,17 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = VWA95UCFV4;
+				DEVELOPMENT_TEAM = LU3JN774B5;
 				INFOPLIST_FILE = 2SetGame/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.wupersonalteam47.internal.-SetGame";
+				PRODUCT_BUNDLE_IDENTIFIER = com.dpsg.internal.SetGame;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -300,15 +322,17 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = VWA95UCFV4;
+				DEVELOPMENT_TEAM = LU3JN774B5;
 				INFOPLIST_FILE = 2SetGame/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.wupersonalteam47.internal.-SetGame";
+				PRODUCT_BUNDLE_IDENTIFIER = com.dpsg.internal.SetGame;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
