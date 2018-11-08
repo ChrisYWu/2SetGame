@@ -88,6 +88,7 @@ class ViewController: UIViewController {
             else {
                 delMeThreeMoreButton.isEnabled = false
                 setHideCardStyle(button: button)
+                //Discard something
             }
         }
         
