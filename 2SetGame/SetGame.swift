@@ -9,20 +9,29 @@
 import Foundation
 
 class SetGame: CustomStringConvertible {
+    // MARK: Instance variables
+    private var chosenCardIndeces = [Int]()
+    private var runnerIndex = 0
+    var scale = 1.0
+    var scaledScore = 0.0
+    var cards = [Card]()
     
-    var shortDescription: String
-    {
+    // MARK: APIs
+    var numberOfCardsOnTable: Int {
+        return cards.filter{ $0.isCardOnTable }.count
+    }
+    
+    var shortDescription: String {
         var retval = ""
         retval = "runnerIndex = \(runnerIndex)\n"
         retval += "chosen Indices = \(chosenCardIndeces.description)\n"
         retval += "total cards on display = \(cards.filter{ $0.state == .onDisplay }.count)\n"
         retval += "total cards chosen = \(cards.filter{ $0.state == .chosen }.count)\n"
-
+        
         return retval
     }
     
-    var description: String
-    {
+    var description: String {
         var retval = shortDescription
         for index in 0..<cards.count{
             retval += "i[\(index)]" + cards[index].description + "\n" + cards[index].shortDescription + "\n"
@@ -30,35 +39,12 @@ class SetGame: CustomStringConvertible {
         return retval
     }
     
-    var dimension = 2
-    
-    var chosenCardIndeces = [Int]()
-    {
-        didSet {
-            if chosenCardIndeces.count == 0 {
-                for index in cards.indices {
-                    if cards[index].state == .chosen {
-                        cards[index].state = .onDisplay
-                    }
-                }
-            }
-        }
-    }
-    
-    private var runnerIndex = 0
-    //var score = 0.0
-    var scale = 1.0
-    var scaledScore = 0.0
-    
-    var cards = [Card]()
-    
     var hasMoreCardsInDeck: Bool {
         return runnerIndex < cards.count
     }
     
     // MARK: Init(dim)
     init() {
-        //assert(dim > 1 && dim < 5, "Please choose a dimention between 2 and 4")
         var card = Card()
         chosenCardIndeces = [Int]()
         runnerIndex = 0
@@ -66,7 +52,8 @@ class SetGame: CustomStringConvertible {
         scale = 1.0
         scaledScore = 0.0
         
-        self.dimension = 4
+        //Set the dimention of the game, it can handle 2 to 4
+        let dimension = 4
                 
         for firstRound in 0...2
         {
@@ -122,7 +109,7 @@ class SetGame: CustomStringConvertible {
         for i1 in 0 ..< cards.count {
             for i2 in 0 ..< cards.count {
                 if (i1 != i2 ) && (cards[i1] == cards[i2]) {
-                    print("Bad Deck: Same cards found card1 = \(cards[i1].description) card2 = \(cards[i2].description)")
+                    print("Bad Deck: Same cards found: card1 = \(cards[i1].description) card2 = \(cards[i2].description)")
                     sameCardFound = true
                     break
                 }
@@ -135,8 +122,42 @@ class SetGame: CustomStringConvertible {
         }
     }
     
-    func drawNextCardForDisplay(cardIndexBeReplacedWith: Int?) -> Card? {
-        if let index = cardIndexBeReplacedWith, cards.indices.contains(index) {
+    func chooseCard(index: Int) -> Bool {
+        if chosenCardIndeces.count < 3, cards.indices.contains(index), cards[index].canChoose {
+            cards[index].state = .chosen
+            chosenCardIndeces.append(index)
+            return true
+        }
+        else {
+            return false
+        }
+    }
+    
+    func deselectCard(index: Int) {
+        if chosenCardIndeces.contains(index), cards.indices.contains(index), cards[index].state == .chosen {
+            cards[index].state = .onDisplay
+            chosenCardIndeces.removeAll(where: {$0 == index})
+        }
+    }
+    
+    func setChosen3Matched()
+    {
+        for index in chosenCardIndeces {
+            cards[index].state = .matched
+        }
+    }
+    
+    func deselectAll() {
+        for index in chosenCardIndeces.indices {
+            if cards[chosenCardIndeces[index]].state == .chosen {
+                cards[chosenCardIndeces[index]].state = .onDisplay
+            }
+        }
+        chosenCardIndeces.removeAll()
+    }
+    
+    func drawNextCardForDisplay(replacedWith recycleIndex: Int?) -> Card? {
+        if let index = recycleIndex, cards.indices.contains(index) {
             cards[index].state = .recycled
         }
         
@@ -161,23 +182,22 @@ class SetGame: CustomStringConvertible {
             retval = false
         }
         else if chosenCardIndeces.indices.count == 3 {
-            retval = cards[chosenCardIndeces[0]].isMatchCard(firstCard: cards[chosenCardIndeces[1]], secondCard: cards[chosenCardIndeces[2]])
+            retval = cards[chosenCardIndeces[0]].matchesWithOtherTwo(firstCard: cards[chosenCardIndeces[1]], secondCard: cards[chosenCardIndeces[2]])
         }
         
         return retval
     }
-        
+    
     func findAMatchSet() -> [Int]? {
         for i1 in 0 ..< cards.count {
             for i2 in i1 + 1 ..< cards.count {
                 for i3 in i2 + 1 ..< cards.count {
-                    if cards[i1].state == .onDisplay && cards[i2].state == .onDisplay && cards[i3].state == .onDisplay  && cards[i1].isMatchCard(firstCard: cards[i2], secondCard: cards[i3]) {
+                    if cards[i1].state == .onDisplay && cards[i2].state == .onDisplay && cards[i3].state == .onDisplay  && cards[i1].matchesWithOtherTwo(firstCard: cards[i2], secondCard: cards[i3]) {
                         return [i1, i2, i3]
                     }
                 }
             }
         }
-        
         return nil
     }
 }

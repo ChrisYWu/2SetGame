@@ -11,7 +11,6 @@ import UIKit
 class ViewController: UIViewController {
     
     private var game = SetGame()
-    private var dimention = 4
     private var chosenButtons = [UIButton]()
 
     private func bindButtons() {
@@ -21,7 +20,7 @@ class ViewController: UIViewController {
             setHideCardStyle(button: button)
             
             if index < 12, game.hasMoreCardsInDeck, index < game.cards.count {
-                if let card = game.drawNextCardForDisplay(cardIndexBeReplacedWith: nil) {
+                if let card = game.drawNextCardForDisplay(replacedWith: nil) {
                     setCardOnDisplay(card: card, button: button)
                     //print("game.description = \(game.description)")
                 }
@@ -33,11 +32,11 @@ class ViewController: UIViewController {
     
     @IBAction func deal3More(_ sender: UIButton) {
         //If three cards are choosen and they are matching, then just replace them with new cards
-        if game.chosenCardIndeces.count > 0, chosen3IsASet
+        if chosen3IsASet
         {
-            replaceCard()
-            game.chosenCardIndeces = [Int]()
-            chosenButtons = [UIButton]()
+            setMatchedButtonsWithNewCards()
+            game.deselectAll()
+            chosenButtons.removeAll()
         }
         //Otherwise run through cards and find the next 3 spots
         else {
@@ -46,7 +45,7 @@ class ViewController: UIViewController {
                 let button = buttons[index]
                 if button.tag == -1 && counter < 3 && game.hasMoreCardsInDeck
                 {
-                    if let card = game.drawNextCardForDisplay(cardIndexBeReplacedWith: nil) {
+                    if let card = game.drawNextCardForDisplay(replacedWith : nil) {
                         setCardOnDisplay(card: card, button: button)
                         counter += 1
                     }
@@ -65,35 +64,34 @@ class ViewController: UIViewController {
     
     @IBAction func newGame(_ sender: UIButton) {
         game = SetGame()
-        chosenButtons = [UIButton]()
+        chosenButtons.removeAll()
         bindButtons()
         updateScore()
         chosen3IsASet = false
     }
     
     private func setChosen(button: UIButton) {
-        game.cards[button.tag].state = .chosen
-        game.chosenCardIndeces.append(button.tag)
-        chosenButtons.append(button)
-        setChosenStyle(button: button)
+        if game.chooseCard(index: button.tag) {
+            chosenButtons.append(button)
+            setChosenStyle(button: button)
+        }
     }
     
-    private func replaceCard() {
+    private func setMatchedButtonsWithNewCards() {
         for index in 0 ... 2 {
             let button = chosenButtons[index]
             
-            if let card = game.drawNextCardForDisplay(cardIndexBeReplacedWith: button.tag) {
+            if let card = game.drawNextCardForDisplay(replacedWith: button.tag) {
                 setCardOnDisplay(card: card, button: button)
             }
             else {
                 delMeThreeMoreButton.isEnabled = false
                 setHideCardStyle(button: button)
-                //Discard something
             }
         }
         
-        game.chosenCardIndeces = [Int]()
-        chosenButtons = [UIButton]()
+        game.deselectAll()
+        chosenButtons.removeAll()
         chosen3IsASet = false
         
         if (!game.hasMoreCardsInDeck && game.findAMatchSet() == nil){
@@ -106,8 +104,8 @@ class ViewController: UIViewController {
         for index in 0 ... 2
         {
             setMatchedStyle(button: chosenButtons[index])
-            game.cards[chosenButtons[index].tag].state = .matched
         }
+        game.setChosen3Matched()
         chosen3IsASet = true
     }
     
@@ -164,7 +162,6 @@ class ViewController: UIViewController {
         let myAttrString = NSAttributedString(string: myString, attributes: myAttribute)
 
         button.setAttributedTitle(myAttrString, for: .normal)
-        //button.setTitle(card.description, for: UIControl.State.normal)
     }
     
     private func setChosenStyle(button: UIButton) {
@@ -192,8 +189,8 @@ class ViewController: UIViewController {
     private func setHideCardStyle(button: UIButton) {
         //Every button is at least go through this once, so the border width stuck
         button.backgroundColor = UIColor.black
-        button.setTitle(nil, for: .normal)
         button.setAttributedTitle(nil, for: .normal)
+        button.setTitle(nil, for: .normal)
         button.tag = -1
         button.isEnabled = false
         button.layer.borderWidth = 3
@@ -234,7 +231,7 @@ class ViewController: UIViewController {
             resetCardOnDisplay(button: chosenButtons[index])
         }
         
-        game.chosenCardIndeces = [Int]()
+        game.deselectAll()
         chosenButtons = [UIButton]()
 
         if let matchingSet = game.findAMatchSet() {
@@ -256,10 +253,10 @@ class ViewController: UIViewController {
     }
     
     @IBAction func touchCard(_ sender: UIButton) {
-        if game.chosenCardIndeces.count < 3 {
-            if game.chosenCardIndeces.contains(sender.tag) {
+        if chosenButtons.count < 3 {
+            if chosenButtons.contains(sender) {
                 // Deselection
-                game.chosenCardIndeces.removeAll(where: { $0 == sender.tag } )
+                game.deselectCard(index: sender.tag)
                 chosenButtons.removeAll(where: { $0.tag == sender.tag })
                 
                 resetCardOnDisplay(button: sender)
@@ -276,14 +273,14 @@ class ViewController: UIViewController {
 //            let allMatched = game.isTheChosen3ASet()
             var shouldChoose = true
 
-            if game.chosenCardIndeces.contains(sender.tag) {
+            if chosenButtons.contains(sender) {
                 shouldChoose = false
             }
             
             if (chosen3IsASet)
             {
                 // the 3 cards are matched set
-                replaceCard()
+                setMatchedButtonsWithNewCards()
             }
             else {
                 // No match but there are 3 cards chosen, they must be the unmatched ones
@@ -292,7 +289,7 @@ class ViewController: UIViewController {
                     resetCardOnDisplay(button: chosenButtons[index])
                     //print("after reset cards=\(game.cards.filter{ $0.state == .onDisplay })")
                 }
-                game.chosenCardIndeces = [Int]()
+                game.deselectAll()
                 chosenButtons = [UIButton]()
             }
             
@@ -300,11 +297,10 @@ class ViewController: UIViewController {
             if (!chosen3IsASet || shouldChoose) {
                 setChosen(button: sender)
             }
-            
             // Out State: all onDisplay or (n-1 on display and 1 chosen)
         }
         
-        if game.chosenCardIndeces.count == 3
+        if chosenButtons.count == 3
         {
             if (game.isTheChosen3ASet())
             {
@@ -324,22 +320,18 @@ class ViewController: UIViewController {
     
     private var chosen3IsASet = false
     
+    private var numberOfButtonFaceUp: Int {
+        return buttons.filter{ $0.tag > -1 }.count
+    }
+    
     private func checkError() {
-        let bc = buttons.filter{ $0.tag > -1 }.count
-        let cc = game.cards.filter{ $0.state == .onDisplay || $0.state == .chosen || $0.state == .matched }.count
-        
-        if (bc != cc)
-        {
+        if (numberOfButtonFaceUp != game.numberOfCardsOnTable) {
             print("game error \n\(game.shortDescription)")
-            for index in 0 ..< buttons.count
-            {
+            for index in 0 ..< buttons.count {
                 if buttons[index].tag > -1 {
                     print("buttons[\(index)]: \(buttons[index].tag); card=\(game.cards[buttons[index].tag].shortDescription)")
                 }
-               
             }
-            
-            //print (game.cards.description)
         }
     }
     
@@ -347,8 +339,6 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         bindButtons()
         print("uuidString = \(String(describing: UIDevice.current.identifierForVendor?.uuidString))")
-        //print(game.description)
-        // Do any additional setup after loading the view, typically from a nib.
     }
     
 }
