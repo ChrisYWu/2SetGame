@@ -17,12 +17,12 @@ class ViewController: UIViewController {
         for index in 0 ..< buttons.count {
             let button = buttons[index]
             button.layer.cornerRadius = 8.0
+            button.titleLabel?.font = UIFont.systemFont(ofSize: 25)
             setHideCardStyle(button: button)
             
             if index < 12, game.hasMoreCardsInDeck, index < game.cards.count {
                 if let card = game.drawNextCardForDisplay(replacedWith: nil) {
                     setCardOnDisplay(card: card, button: button)
-                    //print("game.description = \(game.description)")
                 }
             }
         }
@@ -38,7 +38,6 @@ class ViewController: UIViewController {
             game.deselectAll()
             chosenButtons.removeAll()
         }
-        //Otherwise run through cards and find the next 3 spots
         else {
             var counter = 0
             for index in 0 ..< buttons.count {
@@ -54,9 +53,9 @@ class ViewController: UIViewController {
                     sender.isEnabled = false
                 }
             }
+            game.scale += 0.1
         }
         
-        game.scale += 0.1
         updateScore()
         checkError()
         //print("game.description = \(game.shortDescription)")
@@ -146,7 +145,7 @@ class ViewController: UIViewController {
         case 1 :
             //Ouline, 100% alpha and positive strokeWicth
             myAttribute[NSAttributedString.Key.foregroundColor] = choiceColor
-            myAttribute[NSAttributedString.Key.strokeWidth] = 5
+            myAttribute[NSAttributedString.Key.strokeWidth] = 8
             myAttribute[NSAttributedString.Key.strokeColor] = choiceColor
 
         case 2 :

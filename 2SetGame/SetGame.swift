@@ -15,6 +15,7 @@ class SetGame: CustomStringConvertible {
     var scale = 1.0
     var scaledScore = 0.0
     var cards = [Card]()
+    var dimension = 4
     
     // MARK: APIs
     var numberOfCardsOnTable: Int {
@@ -52,9 +53,6 @@ class SetGame: CustomStringConvertible {
         scale = 1.0
         scaledScore = 0.0
         
-        //Set the dimention of the game, it can handle 2 to 4
-        let dimension = 4
-                
         for firstRound in 0...2
         {
             card.color = firstRound
